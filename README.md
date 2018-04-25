@@ -6,11 +6,11 @@ Most of the shaders here require specialized setup of some form. Below are setup
 ## EyeTrack
 ##### Configurable Eye Tracking
 
+![Eye Track Demo Image](/Media/eyetrackdemo.jpg)
+
 To set up your eyes for tracking with the VilarEyeTrack shader, you will need the origin of each eye object to be it's center. This process is simple in Blender:
 
 ---
-![Eye Track Demo Image](/Media/eyetrackdemo.jpg)
-
 There are a few steps needed to get shader based eye tracking working on your Avatar. You will need to open Blender first and make each eye it's own object.
 
 ---
@@ -43,11 +43,13 @@ That should do the trick! Your eyes are now their own separate objects, ready to
 Export your avatar and go back to Unity!
 
 ---
-![Materials Image](/Media/materials.jpg)
+![Materials Image](/Media/eyematerials.jpg)
+
 Create a separate material for each eye. Set their shader to Vilar/EyeTrack.
 
 ---
 ![Wizard Image](/Media/wizard.jpg)
+
 Run the included setup wizard from VRChat SDK > Vilar's EyeTrack Setup. This will set the offset values for you, as well as autodetect orientation differences between Blender and Maya exports.
 
 
