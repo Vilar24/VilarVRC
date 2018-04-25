@@ -10,15 +10,15 @@ To set up your eyes for tracking with the VilarEyeTrack shader, you will need th
 
 ![Eye Track Demo Gif](/Media/eyetrackdemo.gif)
 
-![Eye Mesh Instructions Image 1](/Media/eyemeshinstruct1.gif)
-![Eye Mesh Instructions Image 2](/Media/eyemeshinstruct2.gif)
-![Eye Mesh Instructions Image 3](/Media/eyemeshinstruct3.gif)
-![Eye Mesh Instructions Image 4](/Media/eyemeshinstruct4.gif)
-![Eye Mesh Instructions Image 5](/Media/eyemeshinstruct5.gif)
-![Eye Mesh Instructions Image 6](/Media/eyemeshinstruct6.gif)
-![Eye Mesh Instructions Image 7](/Media/eyemeshinstruct7.gif)
-![Eye Mesh Instructions Image 8](/Media/eyemeshinstruct8.gif)
-![Eye Mesh Instructions Image 9](/Media/eyemeshinstruct9.gif)
+![Eye Mesh Instructions Image 1](/Media/eyemeshinstruct1.jpg)
+![Eye Mesh Instructions Image 2](/Media/eyemeshinstruct2.jpg)
+![Eye Mesh Instructions Image 3](/Media/eyemeshinstruct3.jpg)
+![Eye Mesh Instructions Image 4](/Media/eyemeshinstruct4.jpg)
+![Eye Mesh Instructions Image 5](/Media/eyemeshinstruct5.jpg)
+![Eye Mesh Instructions Image 6](/Media/eyemeshinstruct6.jpg)
+![Eye Mesh Instructions Image 7](/Media/eyemeshinstruct7.jpg)
+![Eye Mesh Instructions Image 8](/Media/eyemeshinstruct8.jpg)
+![Eye Mesh Instructions Image 9](/Media/eyemeshinstruct9.jpg)
 
 * *images and stuff*
 * done!
