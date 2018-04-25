@@ -44,10 +44,12 @@ Export your avatar and go back to Unity!
 
 ---
 ![Materials Image](/Media/eyematerials.jpg)
+
 Create a separate material for each eye. Set their shader to Vilar/EyeTrack.
 
 ---
 ![Wizard Image](/Media/wizard.jpg)
+
 Run the included setup wizard from VRChat SDK > Vilar's EyeTrack Setup. This will set the offset values for you, as well as autodetect orientation differences between Blender and Maya exports.
 
 
