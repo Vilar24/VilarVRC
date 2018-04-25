@@ -6,11 +6,11 @@ Most of the shaders here require specialized setup of some form. Below are setup
 ## EyeTrack
 ##### Configurable Eye Tracking
 
+![Eye Track Demo Image](/Media/eyetrackdemo.jpg)
+
 To set up your eyes for tracking with the VilarEyeTrack shader, you will need the origin of each eye object to be it's center. This process is simple in Blender:
 
 ---
-![Eye Track Demo Image](/Media/eyetrackdemo.jpg)
-
 There are a few steps needed to get shader based eye tracking working on your Avatar. You will need to open Blender first and make each eye it's own object.
 
 ---
