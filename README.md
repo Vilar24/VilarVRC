@@ -43,7 +43,7 @@ That should do the trick! Your eyes are now their own separate objects, ready to
 Export your avatar and go back to Unity!
 
 ---
-![Materials Image](/Media/materials.jpg)
+![Materials Image](/Media/eyematerials.jpg)
 Create a separate material for each eye. Set their shader to Vilar/EyeTrack.
 
 ---
