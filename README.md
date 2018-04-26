@@ -52,4 +52,5 @@ Create a separate material for each eye. Set their shader to Vilar/EyeTrack.
 
 Run the included setup wizard from VRChat SDK > Vilar's EyeTrack Setup. This will set the offset values for you, as well as autodetect orientation differences between Blender and Maya exports.
 
-
+---
+NOTE: If edited in Amplify Shader, the parralax feature will break. You will need to multiply normals and tangents by the look rotation matrix manually in the vert function after compiling to fix it. The multiply on the normals should be generated, just do the same to tangents.
