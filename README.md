@@ -39,6 +39,9 @@ Press Spacebar and type "cursor". Select "View3D: Snap Cursor to Selected".
 Press Tab to exit Edit Mode. Select your eye object. Press Spacebar and type "origin". Select "Object: Set Origin". Select "Origin to 3D Cursor".
 
 ---
+Lastly, remove the Armature modifier from your eye objects.
+
+---
 That should do the trick! Your eyes are now their own separate objects, ready to be animated by their shader!
 Export your avatar and go back to Unity!
 
