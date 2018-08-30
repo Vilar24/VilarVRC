@@ -6,6 +6,8 @@ Most of the shaders here require specialized setup of some form. Below are setup
 ## EyeTrack
 ##### Configurable Eye Tracking
 
+UPDATE! VRChat has fixed eyetracking for full body tracking! I have added an untracked version to simplify the process. If you wish to use VRChat's built in eyetracking but want all the features of this shader, just use the EyeNoTrack variant of the shader! A demonstration prefab is included in the new release.
+
 ![Eye Track Demo Image](/Media/eyetrackdemo.jpg)
 
 To set up your eyes for tracking with the VilarEyeTrack shader, you will need the origin of each eye object to be it's center. This process is simple in Blender:
