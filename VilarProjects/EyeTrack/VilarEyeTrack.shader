@@ -4,15 +4,15 @@ Shader "Vilar/EyeTrack"
 {
 	Properties
 	{
-		_Albedo("Albedo", 2D) = "white" {}
-		_Normal("Normal", 2D) = "bump" {}
-		_Emission("Emission", 2D) = "black" {}
+		_MainTex("Albedo", 2D) = "white" {}
+		_BumpMap("Normal", 2D) = "bump" {}
+		_EmissionMap("Emission", 2D) = "black" {}
 		_ParallaxHeight("ParallaxHeight", 2D) = "white" {}
 		_StylizedReflection("StylizedReflection", CUBE) = "black" {}
 		_EyeOffset("EyeOffset", Float) = 0
 		_Specular("Specular", Range( 0 , 1)) = 0
-		_Smooth("Smooth", Range( 0 , 1)) = 0
-		_EmissionPower("EmissionPower", Range( 0 , 1)) = 0
+		_Glossiness("Smooth", Range( 0 , 1)) = 0
+		_EmissionMapPower("EmissionPower", Range( 0 , 1)) = 0
 		_Depth("Depth", Range( 0 , 1)) = 0.5236971
 		_IrisSize("IrisSize", Range( 0 , 1)) = 0
 		_FollowLimit("FollowLimit", Range( -1 , 1)) = 0
@@ -54,9 +54,9 @@ Shader "Vilar/EyeTrack"
 			float3 viewDir;
 		};
 
-		uniform sampler2D _Normal;
+		uniform sampler2D _BumpMap;
 		uniform samplerCUBE _StylizedReflection;
-		uniform sampler2D _Albedo;
+		uniform sampler2D _MainTex;
 		uniform float _CrossEye;
 		uniform float _EyeOffset;
 		uniform float _Backward;
@@ -70,10 +70,10 @@ Shader "Vilar/EyeTrack"
 		uniform float _IrisSize;
 		uniform float _MaxPupilDialation;
 		uniform float _PupilDialationFrequency;
-		uniform sampler2D _Emission;
-		uniform float _EmissionPower;
+		uniform sampler2D _EmissionMap;
+		uniform float _EmissionMapPower;
 		uniform float _Specular;
-		uniform float _Smooth;
+		uniform float _Glossiness;
 
 
 		float2 ParallaxOcclusionCustom277( float3 normalWorld , sampler2D heightMap , float2 uvs , float3 viewWorld , float3 viewDirTan , float parallax , float refPlane )
@@ -279,7 +279,7 @@ Shader "Vilar/EyeTrack"
 
 		void surf( Input i , inout SurfaceOutputStandardSpecular o )
 		{
-			float3 NormalMap214 = UnpackNormal( tex2D( _Normal, i.uv_texcoord ) );
+			float3 NormalMap214 = UnpackNormal( tex2D( _BumpMap, i.uv_texcoord ) );
 			o.Normal = NormalMap214;
 			float3 ase_worldPos = i.worldPos;
 			float3 ase_worldViewDir = normalize( UnityWorldSpaceViewDir( ase_worldPos ) );
@@ -355,13 +355,13 @@ Shader "Vilar/EyeTrack"
 			float simplePerlin2D463 = snoise( temp_cast_18 );
 			float smoothstepResult464 = smoothstep( 0.0 , 1.0 , simplePerlin2D463);
 			float2 lerpResult142 = lerp( localParallaxOcclusionCustom277277 , ( ( normalizeResult89 * saturate( (( -0.5 * ( _MaxPupilDialation * smoothstepResult464 ) ) + (temp_output_90_0 - 0.0) * (_IrisSize - ( -0.5 * ( _MaxPupilDialation * smoothstepResult464 ) )) / (_IrisSize - 0.0)) ) ) + float2( 0.5,0.5 ) ) , saturate( ( ( temp_output_90_0 - _IrisSize ) * -10.0 ) ));
-			o.Albedo = ( ( texCUBElod( _StylizedReflection, float4( ( float3(-1,-1,1) * reflect( mul( unity_WorldToCamera, float4( ase_worldViewDir , 0.0 ) ).xyz , mul( unity_WorldToCamera, float4( WorldNormalVector( i , NormalMap214 ) , 0.0 ) ).xyz ) ), (float)0) ).r * _LightColor0 * 1.5 ) + tex2D( _Albedo, lerpResult142 ) ).rgb;
-			o.Emission = ( tex2D( _Emission, lerpResult142 ) * _EmissionPower ).rgb;
+			o.Albedo = ( ( texCUBElod( _StylizedReflection, float4( ( float3(-1,-1,1) * reflect( mul( unity_WorldToCamera, float4( ase_worldViewDir , 0.0 ) ).xyz , mul( unity_WorldToCamera, float4( WorldNormalVector( i , NormalMap214 ) , 0.0 ) ).xyz ) ), (float)0) ).r * _LightColor0 * 1.5 ) + tex2D( _MainTex, lerpResult142 ) ).rgb;
+			o.Emission = ( tex2D( _EmissionMap, lerpResult142 ) * _EmissionMapPower ).rgb;
 			float3 normalizeResult259 = normalize( ase_worldViewDir );
 			float dotResult166 = dot( normalizeResult259 , WorldNorma264 );
 			float3 temp_cast_21 = (( _Specular * pow( saturate( dotResult166 ) , 2.0 ) )).xxx;
 			o.Specular = temp_cast_21;
-			o.Smoothness = _Smooth;
+			o.Smoothness = _Glossiness;
 			o.Alpha = 1;
 		}
 
@@ -573,7 +573,7 @@ Node;AmplifyShaderEditor.NormalizeNode;250;-895.3977,257.3447;Float;False;1;0;FL
 Node;AmplifyShaderEditor.NormalizeNode;252;-889.9548,629.6013;Float;False;1;0;FLOAT3;0,0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.TexCoordVertexDataNode;27;-4245.138,-1231.216;Float;False;0;2;0;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.NormalizeNode;251;-881.6673,400.7412;Float;False;1;0;FLOAT3;0,0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.SamplerNode;22;-3523.521,-1278.859;Float;True;Property;_Normal;Normal;1;0;Create;None;True;0;True;bump;Auto;True;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SamplerNode;22;-3523.521,-1278.859;Float;True;Property;_BumpMap;Normal;1;0;Create;None;True;0;True;bump;Auto;True;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;226;-706.3069,573.7806;Float;False;2;2;0;FLOAT4x4;0.0,0,0;False;1;FLOAT3;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.CommentaryNode;229;-497.8315,350.6757;Float;False;370.1652;227.7619;Tangent Transform (To perturb normals);1;227;;1,1,1,1;0;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;224;-710.1921,458.13;Float;False;2;2;0;FLOAT4x4;0,0,0;False;1;FLOAT3;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;False;1;FLOAT3;0
@@ -645,13 +645,13 @@ Node;AmplifyShaderEditor.SamplerNode;289;-491.6861,-1400.385;Float;True;Property
 Node;AmplifyShaderEditor.RangedFloatNode;299;-349.1009,-1079.575;Float;False;Constant;_Float4;Float 4;16;0;Create;1.5;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;256;-393.0351,-230.3413;Float;False;Constant;_Float3;Float 3;15;0;Create;2;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.LerpOp;142;-1312.043,-835.3046;Float;False;3;0;FLOAT2;0,0;False;1;FLOAT2;0,0;False;2;FLOAT;0,0;False;1;FLOAT2;0
-Node;AmplifyShaderEditor.RangedFloatNode;33;-244.388,-521.6429;Float;False;Property;_EmissionPower;EmissionPower;8;0;Create;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;33;-244.388,-521.6429;Float;False;Property;_EmissionMapPower;EmissionPower;8;0;Create;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;298;-140.6895,-1226.712;Float;False;3;3;0;FLOAT;0,0,0,0;False;1;COLOR;0;False;2;FLOAT;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.PowerNode;255;-233.8377,-281.4425;Float;False;2;0;FLOAT;0.0;False;1;FLOAT;0.0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.PosVertexDataNode;7;-1104.979,93.55486;Float;False;0;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SamplerNode;2;-266.4699,-918.2617;Float;True;Property;_Albedo;Albedo;0;0;Create;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SamplerNode;2;-266.4699,-918.2617;Float;True;Property;_MainTex;Albedo;0;0;Create;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.RangedFloatNode;164;-336.0393,-425.6275;Float;False;Property;_Specular;Specular;6;0;Create;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.SamplerNode;31;-264.3959,-718.8957;Float;True;Property;_Emission;Emission;2;0;Create;None;True;0;False;black;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SamplerNode;31;-264.3959,-718.8957;Float;True;Property;_EmissionMap;Emission;2;0;Create;None;True;0;False;black;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.CommentaryNode;498;-4692.834,-141.1104;Float;False;545.1133;362.3372;;5;495;492;497;493;494;Color Debug;1,1,1,1;0;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;492;-4428.864,73.36301;Float;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;9;-699.8911,152.6463;Float;False;2;2;0;FLOAT4x4;0.0;False;1;FLOAT3;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;False;1;FLOAT3;0
@@ -663,7 +663,7 @@ Node;AmplifyShaderEditor.GetLocalVarNode;286;96.93012,-722.2957;Float;False;214;
 Node;AmplifyShaderEditor.Vector3Node;493;-4663.215,-58.33155;Float;False;Constant;_Vector10;Vector 10;19;0;Create;1,1,1;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;494;-4287.345,37.09644;Float;False;2;2;0;FLOAT;0,0,0;False;1;FLOAT3;0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;168;-26.08187,-387.9476;Float;False;2;2;0;FLOAT;0.0;False;1;FLOAT;0.0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;30;-252.8009,-104.7871;Float;False;Property;_Smooth;Smooth;7;0;Create;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;30;-252.8009,-104.7871;Float;False;Property;_Glossiness;Smooth;7;0;Create;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;951.1072,-517.2842;Float;False;True;2;Float;ASEMaterialInspector;0;0;StandardSpecular;Vilar/EyeTrack;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;0;False;0;0;Opaque;0.5;True;True;0;False;Opaque;Geometry;All;True;True;True;True;True;False;False;False;False;False;False;False;False;True;True;True;True;False;0;255;255;0;0;0;0;0;0;0;0;False;2;15;10;25;False;0.5;True;0;Zero;Zero;0;Zero;Zero;OFF;OFF;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Absolute;0;;-1;-1;-1;-1;0;0;0;False;0;0;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT3;0,0,0;False;4;FLOAT;0.0;False;5;FLOAT;0.0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0.0;False;9;FLOAT;0.0;False;10;FLOAT;0.0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;515;0;512;0
 WireConnection;511;0;473;0
