@@ -6,7 +6,7 @@ Most of the shaders here require specialized setup of some form. Below are setup
 ## EyeTrack
 ##### Configurable Eye Tracking
 
-![Example Image](/Media/exampleimage.jpg)
+![Example Image](/Media/exampleimage.png)
 
 Version 2!
 
