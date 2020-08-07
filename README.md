@@ -6,6 +6,8 @@ Most of the shaders here require specialized setup of some form. Below are setup
 ## EyeTrack
 ##### Configurable Eye Tracking
 
+![Example Image](/Media/exampleimage.jpg)
+
 Version 2!
 
 VRChat has fixed eyetracking for full body tracking! I have added an untracked version to simplify the process. The default shader now does not auto track, but an AutoTrack variant is included! Demonstration prefabs are included for each.
