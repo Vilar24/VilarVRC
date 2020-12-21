@@ -3,6 +3,13 @@ Vilar's Shaders for VRChat
 
 Most of the shaders here require specialized setup of some form. Below are setup instructions for each shader.
 
+## Geometry Dissolve
+##### A dissolve shader that renders models into tetrahedrons
+
+![Dissolve Demo](/Media/dissolvedemo.jpg)
+
+This is the geometry dissolve shader I use for my spawn in and AFK effects in VRChat.
+
 ## EyeTrack
 ##### Configurable Eye Tracking
 
