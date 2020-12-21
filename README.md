@@ -1,8 +1,6 @@
 # VilarVRC
 Vilar's Shaders for VRChat
 
-Most of the shaders here require specialized setup of some form. Below are setup instructions for each shader.
-
 ## Geometry Dissolve
 ##### A dissolve shader that renders models into tetrahedrons
 
