@@ -1,0 +1,17 @@
+﻿sampler2D _MainTex; float4 _MainTex_ST;
+sampler2D _MetallicGlossMap;
+sampler2D _EmissionMap;
+sampler2D _OcclusionMap;
+sampler2D _BumpMap;
+float4 _Color;
+float _Metallic;
+float _Glossiness;
+float _BumpScale;
+float _DissolveCoverage;
+float _DissolveDistance;
+float _WireframeSmoothing;
+float _WireframeThickness;
+float4 _WireframeColor;
+float4 _WireframeColor2;
+int _LightProbeMethod;
+int _SmoothnessTextureChannel=0;
