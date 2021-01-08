@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: VilarGeometryDissolve
-  m_Shader: {fileID: 4800000, guid: df1649bd0a5ed3046a98a6f3e6294325, type: 3}
+  m_Shader: {fileID: 4800000, guid: 812fcd1e992280c4eb77c5cc74474c16, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -20,6 +20,10 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ClearcoatMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -56,19 +60,25 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AmbientBoost: 0
     - _BumpScale: 1
-    - _Cutoff: 0.5
+    - _Clearcoat: 0
+    - _ClearcoatGlossiness: 0.5
+    - _Cutoff: 0.461
     - _DetailNormalMapScale: 1
-    - _DissolveCoverage: 0.501
-    - _DissolveDistance: 0.078
+    - _DissolveCoverage: 0.42
+    - _DissolveDistance: 0.096
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.175
     - _GlossyReflections: 1
+    - _LightProbeMethod: 1
     - _Metallic: 0
+    - _MinimumFramerate: 90
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _Reflectance: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -77,6 +87,9 @@ Material:
     - _WireframeThickness: 0.345
     - _ZWrite: 1
     m_Colors:
+    - _AmbientBoostGround: {r: 0.25698647, g: 0.38302797, b: 0.5188679, a: 1}
+    - _AmbientBoostHorizon: {r: 0.24705881, g: 0.5019608, b: 0.3377198, a: 1}
+    - _AmbientBoostSky: {r: 1, g: 0.83722687, b: 0.5137255, a: 1}
     - _Color: {r: 0.49721256, g: 0.6981132, b: 0.3721075, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _WireframeColor: {r: 0.18431371, g: 0.76092905, b: 1, a: 1}

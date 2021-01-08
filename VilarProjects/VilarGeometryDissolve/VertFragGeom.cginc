@@ -4,8 +4,8 @@
 #define TRANSFER_SHADOW_CASTER_NOPOS_GEOMETRY(o,opos) o.vec = mul(unity_ObjectToWorld, v[i].vertex).xyz - _LightPositionRange.xyz; opos = o.pos;
 #else
 #define V2F_SHADOW_CASTER_NOPOS
-#define TRANSFER_SHADOW_CASTER_NOPOS_GEOMETRY(o,opos,p,n) \
-        opos = UnityClipSpaceShadowCasterPos(p, n); \
+#define TRANSFER_SHADOW_CASTER_NOPOS_GEOMETRY(o, opos, vertexPosition, vertexNormal) \
+        opos = UnityClipSpaceShadowCasterPos(vertexPosition, vertexNormal); \
         opos = UnityApplyLinearShadowBias(opos);
 #endif
 
@@ -126,9 +126,6 @@ float2 GetUV(float2 uv1, float2 uv2, float2 uv3, float2 uv4, int index) {
 		uv2, uv1, uv4,
 		uv3, uv2, uv4,
 		uv1, uv3, uv4
-		//uv2 + 10, uv1 + 10, uv4 + 10,
-		//uv3 + 10, uv2 + 10, uv4 + 10,
-		//uv1 + 10, uv3 + 10, uv4 + 10
 	};
 	return uv[index];
 }
@@ -161,82 +158,130 @@ v2g vert (appdata v)
     return o;
 }
 
-
 [maxvertexcount(12)]
 void geom(triangle v2g v[3], uint triangleID: SV_PrimitiveID, inout TriangleStream<g2f> tristream)
 {
+
+	//float framerate = 1000/unity_DeltaTime.w;
+	//bool skip = framerate<_MinimumFramerate || _DissolveCoverage < 0.001;
+	bool skip = _DissolveCoverage < 0.001;
 	g2f o = (g2f)0;
 	float4 centerPoint = v[0].vertex;
-
 	float lightup = float2(0,0);
-	if (_DissolveCoverage > 0.001) {
-	float4 triCenter = (v[0].vertex + v[1].vertex + v[2].vertex) / 3;
-	triCenter = float4(triCenter.xyz, 1);
-	float3 averageNormal = normalize((v[0].normal, v[1].normal, v[2].normal) / 3);
-	float3 averageEdgeLength = (length(v[1].vertex - v[0].vertex) + length(v[2].vertex - v[1].vertex) + length(v[2].vertex - v[0].vertex)) / 3;
-	float3 offsetNormal = float3(1, 0, 0);
-	offsetNormal += 5 * float3(1, 0, 0) * simplex3d(triCenter * 6 + float3(_Time.x * 3.1562, _Time.x*1.712, _Time.x*2.17));
-	offsetNormal += 5 * float3(0, 1, 0) * simplex3d(triCenter * 7 + float3(_Time.x * 1.51, _Time.x*0.94, _Time.x*1.18));
 
-	float dist = simplex3d(triCenter * 3 + float3(_Time.x * 3.11, _Time.x * 2.13, _Time.x * 0.31));
-	float dissolvecover = (_DissolveCoverage - 0.2) * 4 - triCenter.y * 1;
-	dist += dissolvecover + random(float2(triangleID, triangleID+100))*0.1;
-	lightup = max(0,(dist * 3 - 1.5) * 10 + sin(dist * 100 + _Time.x * 10) * 0);
-	dist = saturate(dist * 3 - 2);
+	if (_DissolveCoverage >= 0.001) {
+		float4 triCenter = (v[0].vertex + v[1].vertex + v[2].vertex) / 3;
+		triCenter = float4(triCenter.xyz, 1);
+		centerPoint = triCenter;
+		float3 averageEdgeLength = float3(1,1,1);
+		float3 tangentSpaceOffset = float3(0, 0, 0);
 
-	centerPoint = triCenter - float4(averageNormal * averageEdgeLength * (saturate(dist * 50)+0.1), 0);
+		float dist = simplex3d(triCenter * 3 + float3(_Time.x * 3.11, _Time.x * 2.13, _Time.x * 0.31));
+		float dissolvecover = (_DissolveCoverage - 0.2) * 4 - triCenter.y * 1;
+		dist += dissolvecover + random(float2(triangleID, triangleID+100))*0.1;
+		lightup = max(0,(dist * 3 - 1.5) * 10 + sin(dist * 100 + _Time.x * 10) * 0);
+		dist = saturate(dist * 3 - 2);
 
-	v[0].vertex = mul(YRotationMatrix(dist * 3000 * _DissolveDistance), (v[0].vertex - triCenter))*(1 - dist) + triCenter;
-	v[1].vertex = mul(YRotationMatrix(dist * 3000 * _DissolveDistance), (v[1].vertex - triCenter))*(1 - dist) + triCenter;
-	v[2].vertex = mul(YRotationMatrix(dist * 3000 * _DissolveDistance), (v[2].vertex - triCenter))*(1 - dist) + triCenter;
-	centerPoint = mul(YRotationMatrix(dist * 3000 * _DissolveDistance), (centerPoint - triCenter))*(1 - dist) + triCenter;
-	float3 bitan = normalize(cross(v[0].normal, v[0].tangent));
-	offsetNormal = v[0].normal * offsetNormal.x + v[0].tangent * offsetNormal.y + bitan * offsetNormal.z;
+		if (!skip) {
+			float3 averageNormal = normalize((v[0].normal + v[1].normal + v[2].normal) / 3);
+			float3 averageEdgeLength = (length(v[1].vertex - v[0].vertex) + length(v[2].vertex - v[1].vertex) + length(v[2].vertex - v[0].vertex)) / 3;
+			tangentSpaceOffset += 5 * float3(1, 0, 0) * simplex3d(triCenter * 6 + float3(_Time.x * 3.1562, _Time.x*1.712, _Time.x*2.17));
+			tangentSpaceOffset += 5 * float3(0, 1, 0) * simplex3d(triCenter * 7 + float3(_Time.x * 1.51, _Time.x*0.94, _Time.x*1.18));
+			centerPoint = triCenter - float4(averageNormal * averageEdgeLength * (saturate(dist * 50)+0.1), 0);
+			v[0].vertex = mul(YRotationMatrix(dist * 3000 * _DissolveDistance), (v[0].vertex - triCenter))*(1 - dist) + triCenter;
+			v[1].vertex = mul(YRotationMatrix(dist * 3000 * _DissolveDistance), (v[1].vertex - triCenter))*(1 - dist) + triCenter;
+			v[2].vertex = mul(YRotationMatrix(dist * 3000 * _DissolveDistance), (v[2].vertex - triCenter))*(1 - dist) + triCenter;
+			centerPoint = mul(YRotationMatrix(dist * 3000 * _DissolveDistance), (centerPoint - triCenter))*(1 - dist) + triCenter;
+			float3 bitan = normalize(cross(v[0].normal, v[0].tangent));
+			tangentSpaceOffset = v[0].normal * tangentSpaceOffset.x + v[0].tangent * tangentSpaceOffset.y + bitan * tangentSpaceOffset.z;
 
-	v[0].vertex += float4(offsetNormal, 0) * dist * _DissolveDistance;
-	v[1].vertex += float4(offsetNormal, 0) * dist * _DissolveDistance;
-	v[2].vertex += float4(offsetNormal, 0) * dist * _DissolveDistance;
-	centerPoint += float4(offsetNormal, 0) * dist * _DissolveDistance;
-}
+			v[0].vertex += float4(tangentSpaceOffset, 0) * dist * _DissolveDistance;
+			v[1].vertex += float4(tangentSpaceOffset, 0) * dist * _DissolveDistance;
+			v[2].vertex += float4(tangentSpaceOffset, 0) * dist * _DissolveDistance;
+			centerPoint += float4(tangentSpaceOffset, 0) * dist * _DissolveDistance;
+		} else {
+			v[0].vertex = lerp(v[0].vertex, centerPoint, dist);
+			v[1].vertex = lerp(v[1].vertex, centerPoint, dist);
+			v[2].vertex = lerp(v[2].vertex, centerPoint, dist);
+			v[0].vertex += float4(v[0].normal,1) * dist * _DissolveDistance;
+			v[1].vertex += float4(v[0].normal,1) * dist * _DissolveDistance;
+			v[2].vertex += float4(v[0].normal,1) * dist * _DissolveDistance;
+		}
 
-	
+	}
+
 	int triCount = 3;
-	if (_DissolveCoverage > 0.001) triCount = 12;
+	if (skip) {
+		for (int i = 0; i < triCount; i++) {
+			float4 vertex = v[i].vertex;
+			float3 normal = v[i].normal;
+			float2 uv = v[i].uv;
+			float3 tang = v[i].tangent;
+			float3 bitan = cross(v[i].normal, v[i].tangent.xyz);
+			o.pos = UnityObjectToClipPos(vertex);
+			o.uv = TRANSFORM_TEX(uv, _MainTex);
+			#if defined(UNITY_PASS_FORWARDBASE)
+			o.bary = float3(saturate(i%3-1), saturate((i+1)%3-1), saturate((i+2)%3-1));
+			o.uv1 = float2(lightup, saturate(i-3));
+			//o.uv2 = v[0].uv2;
+			#endif
+			
+			//Only pass needed things through for shadow caster
+			#if !defined(UNITY_PASS_SHADOWCASTER)
+			float3 worldNormal = UnityObjectToWorldNormal(normal);
+			float3 tangent = UnityObjectToWorldDir(tang);
+			float3 bitangent = cross(tangent, worldNormal) * v[i].tangent.w;
 
-	for (int i = 0; i < triCount; i++)
-	{
-		float4 vertex = GetVertex(v[0].vertex, v[1].vertex, v[2].vertex, centerPoint, i);
-		float3 normal = GetNormal(v[0].vertex, v[1].vertex, v[2].vertex, centerPoint, v[0].normal, v[1].normal, v[2].normal, i);
-		float2 uv = GetUV(v[0].uv, v[1].uv, v[2].uv, (v[0].uv + v[1].uv + v[2].uv) / 3, i);
-		float3 tang = GetTangent(v[0].tangent, v[1].tangent, v[2].tangent, i);
-		float3 bitan = GetTangent(cross(v[0].normal, v[0].tangent.xyz) * v[0].tangent.w, cross(v[1].normal, v[1].tangent.xyz) * v[0].tangent.w, cross(v[2].normal, v[2].tangent.xyz) * v[2].tangent.w, i);
-		o.pos = UnityObjectToClipPos(vertex);
-		o.uv = TRANSFORM_TEX(uv, _MainTex);
-		#if defined(UNITY_PASS_FORWARDBASE)
-		o.bary = float3(saturate(i%3-1), saturate((i+1)%3-1), saturate((i+2)%3-1));
-		o.uv1 = float2(lightup, saturate(i-3));
-		//o.uv2 = v[0].uv2;
-		#endif
-		
-		//Only pass needed things through for shadow caster
-		#if !defined(UNITY_PASS_SHADOWCASTER)
-		float3 worldNormal = UnityObjectToWorldNormal(normal);
-		float3 tangent = UnityObjectToWorldDir(tang);
-		float3 bitangent = UnityObjectToWorldDir(bitan);
+			o.btn[0] = bitangent;
+			o.btn[1] = tangent;
+			o.btn[2] = worldNormal;
+			o.worldPos = mul(unity_ObjectToWorld, vertex);
+			o.objPos = vertex;
+			o.objNormal = normal;
+			UNITY_TRANSFER_SHADOW(o, o.uv);
+			#else
+			TRANSFER_SHADOW_CASTER_NOPOS_GEOMETRY(o, o.pos, vertex, normal);
+			#endif
 
-		o.btn[0] = bitangent;
-		o.btn[1] = tangent;
-		o.btn[2] = worldNormal;
-		o.worldPos = mul(unity_ObjectToWorld, vertex);
-		o.objPos = vertex;
-		o.objNormal = normal;
-		UNITY_TRANSFER_SHADOW(o, o.uv);
-		#else
-		TRANSFER_SHADOW_CASTER_NOPOS_GEOMETRY(o, o.pos, vertex, normal);
-		#endif
+			tristream.Append(o);
+			if (i%3==2) tristream.RestartStrip();
+		}
+	} else {
+		triCount = 12;
+		for (int i = 0; i < triCount; i++) {
+			float4 vertex = GetVertex(v[0].vertex, v[1].vertex, v[2].vertex, centerPoint, i);
+			float3 normal = GetNormal(v[0].vertex, v[1].vertex, v[2].vertex, centerPoint, v[0].normal, v[1].normal, v[2].normal, i);
+			float2 uv = GetUV(v[0].uv, v[1].uv, v[2].uv, (v[0].uv + v[1].uv + v[2].uv) / 3, i);
+			float3 tang = GetTangent(v[0].tangent, v[1].tangent, v[2].tangent, i);
+			//float3 bitan = GetTangent(cross(v[0].normal, v[0].tangent.xyz) * v[0].tangent.w, cross(v[1].normal, v[1].tangent.xyz) * v[1].tangent.w, cross(v[2].normal, v[2].tangent.xyz) * v[2].tangent.w, i);
+			o.pos = UnityObjectToClipPos(vertex);
+			o.uv = TRANSFORM_TEX(uv, _MainTex);
+			#if defined(UNITY_PASS_FORWARDBASE)
+			o.bary = float3(saturate(i%3-1), saturate((i+1)%3-1), saturate((i+2)%3-1));
+			o.uv1 = float2(lightup, saturate(i-3));
+			//o.uv2 = v[0].uv2;
+			#endif
+			
+			//Only pass needed things through for shadow caster
+			#if !defined(UNITY_PASS_SHADOWCASTER)
+			float3 worldNormal = UnityObjectToWorldNormal(normal);
+			float3 worldTangent = UnityObjectToWorldDir(tang);
+			float3 worldBitangent = cross(worldTangent, worldNormal) * v[0].tangent.w;
 
-		tristream.Append(o);
-		if (i%3==2) tristream.RestartStrip();
+			o.btn[0] = worldBitangent;
+			o.btn[1] = worldTangent;
+			o.btn[2] = worldNormal;
+			o.worldPos = mul(unity_ObjectToWorld, vertex);
+			o.objPos = vertex;
+			o.objNormal = normal;
+			UNITY_TRANSFER_SHADOW(o, o.uv);
+			#else
+			TRANSFER_SHADOW_CASTER_NOPOS_GEOMETRY(o, o.pos, vertex, normal);
+			#endif
+
+			tristream.Append(o);
+			if (i%3==2) tristream.RestartStrip();
+		}
 	}
 
 }
