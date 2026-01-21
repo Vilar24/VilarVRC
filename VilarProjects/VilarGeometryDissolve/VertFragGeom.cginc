@@ -86,7 +86,7 @@ float4x4 YRotationMatrix(float degrees)
 		0, 0, 0, 1);
 }
 
-float4 GetVertex(float4 p1, float4 p2, float4 p3, float4 p4, int index) {
+float4 GetVertex(float4 p1, float4 p2, float4 p3, float4 p4, uint index) {
 	float4 v[12] =
 	{
 		p1, p2, p3,
@@ -97,7 +97,7 @@ float4 GetVertex(float4 p1, float4 p2, float4 p3, float4 p4, int index) {
 	return v[index];
 }
 
-float3 GetNormal(float4 p1, float4 p2, float4 p3, float4 p4, float3 n1, float3 n2, float3 n3, int index) {
+float3 GetNormal(float4 p1, float4 p2, float4 p3, float4 p4, float3 n1, float3 n2, float3 n3, uint index) {
 	float4 calcIndex[12] = 
 	{
 		p1, p2, p3,
@@ -106,7 +106,7 @@ float3 GetNormal(float4 p1, float4 p2, float4 p3, float4 p4, float3 n1, float3 n
 		p3, p1, p4
 	};
 
-	int generateIndex = index / 3;
+	uint generateIndex = index / 3;
 	float3 generatedNormal = normalize(cross(normalize(calcIndex[generateIndex + 1] - calcIndex[generateIndex]), normalize(calcIndex[generateIndex + 2] - calcIndex[generateIndex])));
 
 	float3 n[12] =
@@ -119,7 +119,7 @@ float3 GetNormal(float4 p1, float4 p2, float4 p3, float4 p4, float3 n1, float3 n
 	return n[index];
 }
 
-float2 GetUV(float2 uv1, float2 uv2, float2 uv3, float2 uv4, int index) {
+float2 GetUV(float2 uv1, float2 uv2, float2 uv3, float2 uv4, uint index) {
 	float2 uv[12] =
 	{
 		uv1, uv2, uv3,
@@ -130,7 +130,7 @@ float2 GetUV(float2 uv1, float2 uv2, float2 uv3, float2 uv4, int index) {
 	return uv[index];
 }
 
-float3 GetTangent(float3 tan1, float3 tan2, float3 tan3, int index) {
+float3 GetTangent(float3 tan1, float3 tan2, float3 tan3, uint index) {
 	float3 tan[12] =
 	{
 		tan1, tan2, tan3,
@@ -210,9 +210,9 @@ void geom(triangle v2g v[3], uint triangleID: SV_PrimitiveID, inout TriangleStre
 
 	}
 
-	int triCount = 3;
+	uint triCount = 3;
 	if (skip) {
-		for (int i = 0; i < triCount; i++) {
+		for (uint i = 0; i < triCount; i++) {
 			float4 vertex = v[i].vertex;
 			float3 normal = v[i].normal;
 			float2 uv = v[i].uv;
@@ -248,7 +248,7 @@ void geom(triangle v2g v[3], uint triangleID: SV_PrimitiveID, inout TriangleStre
 		}
 	} else {
 		triCount = 12;
-		for (int i = 0; i < triCount; i++) {
+		for (uint i = 0; i < triCount; i++) {
 			float4 vertex = GetVertex(v[0].vertex, v[1].vertex, v[2].vertex, centerPoint, i);
 			float3 normal = GetNormal(v[0].vertex, v[1].vertex, v[2].vertex, centerPoint, v[0].normal, v[1].normal, v[2].normal, i);
 			float2 uv = GetUV(v[0].uv, v[1].uv, v[2].uv, (v[0].uv + v[1].uv + v[2].uv) / 3, i);
